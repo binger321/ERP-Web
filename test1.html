@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Page level plugin JavaScript-->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+    <script src="vendor/datatables/jquery.dataTables.js"></script>
+    <script>
+  var token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MjYzOTM4MzAsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiNzg0N2RmNDgtOGU4YS00NmNiLWIxYzgtMTQxNDljZWMwMjM5IiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.b22WH-9uAwQDPybCH1AqDojPKKFmE3-6S-h9PMKfml_w4dWQt2f1jHML14TTnKTdgL0wjqwO09ptk4g7dVOKdYZiherKmjauQ5NXFjyYdLaDRahg9M9PORnIbPudYUdV_A2FiIwR3SPGk1F_dfy9OZhX1CQc2dXXjUmo722bBXVogcdK5iL-pRdt0waQKqUsDgDc4p81J5peuQYNLwZMNlIXJvx4AAQPy8tLPaVZkLIA8FKFmt_9Wl2NgQJ_ue2MyNwOFJfvsNNfaxjh5MX2jzZMHtLRM-zAy9WdNjjn1mH3BLYm4EprhAotTYPk4AQvBydMshvS4hcpOAONcDsf-g';
+
+$(document).ready(function(){
+  $("#getBtn").click(function(){
+    $.ajax({
+        type:"GET",
+        url:"/WebDemo/servlet/AjaxDemoServlet",
+        dataType:"json",
+        success:function(data){
+            $("#data").html(data.name + '的任务是' + data.task);
+        },
+        error:function(data){
+             $("#data").html("发生错误:"+data.status);
+        }
+    });
+  });
+  
+   $("#postBtn").click(function(){
+      $.ajax({
+        type:"POST",
+        url:"/WebDemo/servlet/AjaxDemoServlet",
+         data:{
+           username:$("#username").val(),
+           password:$("#password").val(),
+        },
+        dataType:"json",     
+        success:function(data){
+            if(data.state){
+                $("#test").html(data.msg);
+            }else{
+                $("#test").html("验证未通过:"+ data.msg);
+            }
+        },
+        error:function(data){
+             $("#test").html("发生错误:"+data.msg);
+        }
+    });
+  });
+    $("#helloBtn").click(function(){
+      $.ajax({
+        url:'http://localhost:8080/sayHello',
+        type:'POST',
+        dataType:"json",
+        data:{
+            name:$("#name").val(),
+        },
+        success:function(data){
+            if(data.status){
+                $("#data2").html(data.data);
+            }else{
+                $("#data2").html("验证未通过:"+ data.data);
+            }
+        },
+        error:function(data){
+             $("#data2").html("发生错误:"+data.status);
+        }
+    });
+  });   
+    $("#testBtn").click(function(){
+      $.ajax({
+        url:'http://localhost:20001/erp-svc-goods/user/list',
+        type:'POST',
+        dataType:"json",
+        data: '{"userName" : "sys"}',
+        beforeSend: function(request) {  
+            request.setRequestHeader("Authorization", 'Bearer ' + token);
+        },
+        contentType: "application/json;charset=UTF-8",
+        success:function(data){
+            if(!data.status){
+                // $("#data2").html(data.data);
+                alert(JSON.stringify(data));
+            }else{
+                $("#data").html("验证未通过:"+ data[0]);
+            }
+        },
+        error:function(data){
+             $("#data2").html("发生错误:"+data.status);
+        }
+    });
+  });  
+});
+</script>
+</head>
+<body>
+
+<div>
+<button id="getBtn">GET</button>
+<div id="data"></div>
+</div>
+<br>
+<div>
+<div>
+<span>用户名</span>
+<input type="text" id="username">
+</div>
+<div>
+<span>密　码</span> 
+<input type="text" id="password">
+</div>
+<button id="postBtn">POST</button>
+<div id="test"></div>
+</div>
+<div>
+<span>name</span>
+<input type="text" id="name">
+<button id="helloBtn">说话</button>
+<button id="testBtn">测试</button>
+<div id="data2"></div>
+</div>
+
+
+</body>
+</html>

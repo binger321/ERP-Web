@@ -5,7 +5,7 @@ $(document).ready(function() {
 
   var host = "http://localhost:20001/";
 
-  var token = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MjYzOTM4MzAsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiNzg0N2RmNDgtOGU4YS00NmNiLWIxYzgtMTQxNDljZWMwMjM5IiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.b22WH-9uAwQDPybCH1AqDojPKKFmE3-6S-h9PMKfml_w4dWQt2f1jHML14TTnKTdgL0wjqwO09ptk4g7dVOKdYZiherKmjauQ5NXFjyYdLaDRahg9M9PORnIbPudYUdV_A2FiIwR3SPGk1F_dfy9OZhX1CQc2dXXjUmo722bBXVogcdK5iL-pRdt0waQKqUsDgDc4p81J5peuQYNLwZMNlIXJvx4AAQPy8tLPaVZkLIA8FKFmt_9Wl2NgQJ_ue2MyNwOFJfvsNNfaxjh5MX2jzZMHtLRM-zAy9WdNjjn1mH3BLYm4EprhAotTYPk4AQvBydMshvS4hcpOAONcDsf-g";
+  var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Mjc5NTYyMDEsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiZjM1ZjhkZWQtYWE1ZC00NzgyLTg3NTMtZDNmYTllYWMyODcyIiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.mRODYcySJitGU3wGksUkr5YHMTW2bHHSIi7Ft9DoBdLyXZ6oaH3nceRyb0fyVTQEuk0V1MqCpRjfjU7SGR07aLXUotpf78nnrgdQj6RfJFvHV9MmFaWSfFlimqE-3YwEUCCyc_ATCDWgrHftMlTQuZYNnS9-4YGJ4WWbe2oXjxAnJ1gYW3gMMlmwCW5zEmKSUPPczC_3VqfD_G5W_tsOTMvGJsCqJe0Z8Id5XLY_JTV41SJFLpJjPAwXgIalFSjtf-8uQswIy8e3Q-iZaTJrM2wnliqtHiz3mzMBQLeXtAm4ZgY6oOlUNRolw_ZrGNFVCStvgSksT7Wri06HXrYYPg";
   // var lastIdx = null;
   var DataTable;
 
@@ -93,8 +93,8 @@ $(document).ready(function() {
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
       data: userSelectForm,
-      beforeSend: function(request) {
-        request.setRequestHeader("Authorization", token);
+      beforeSend: function(request) {  
+          request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function() {
         toastr.success('数据新增成功');
@@ -150,10 +150,12 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/user/list" + "?pageNo=" + pageNo + "&pageSize=" + pageSize,
+      url: host + "erp-svc-goods/user/list",
+      // "?pageNo=" + pageNo + "&pageSize=" + pageSize
       data: userSelectQuery,
       beforeSend: function(request) {
-        request.setRequestHeader("Authorization", token);
+        request.setRequestHeader("Authorization", "Bearer " + token);
+        // request.setRequestHeader("Access-Control-Allow-Origin", "*");
       },
       success: function(result) {
 
@@ -182,10 +184,10 @@ $(document).ready(function() {
             "targets": 0
           }]
         });
-        toastr.success('数据查询成功');
+        toastr.success(result.msg);
       },
       error: function() {
-        toastr.error('数据查询失败');
+        toastr.error(result.msg);
       }
     });
 
