@@ -24,7 +24,7 @@ $(document).ready(function() {
   var firstIdx = null;
 
   var lastQuery = null;
-
+  
 
   var setting = dataTable.fnSettings();
   var pageNo = setting._iDisplayStart + 1;
@@ -83,6 +83,7 @@ $(document).ready(function() {
     // firstIdx = DataTable.row(this)[0];
 
     var rowData = DataTable.row(this).data();
+    var fs =  $("#dataTable").dataTable().fnSettings();
     if(firstIdx == null) {
       $(this).addClass('highlight');
       firstIdx = DataTable.row(this)[0];
@@ -93,10 +94,11 @@ $(document).ready(function() {
       if (firstIdx.equals(DataTable.row(this)[0])) {
         $(this).removeClass('highlight');
         deleteId = null;
+        firstIdx = null;
         $('#userDeleteBtn').attr('disabled','true');
         $('#userUpdateBtn').attr('disabled','true');
       } else {
-        $('#dataTable tbody tr').eq(firstIdx).removeClass('highlight');
+        $('#dataTable tbody tr').eq(firstIdx%fs._iDisplayLength).removeClass('highlight');
         firstIdx = DataTable.row(this)[0];
         deleteId = DataTable.row(this).data().id;
         $(this).addClass('highlight');
@@ -295,6 +297,8 @@ $(document).ready(function() {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function(result) {
+        $("#userCode_update").val(result.data.userCode);
+        $("#userName_update").val(result.data.userName);
         if (result.status == 0) {
           $.ajax({
             url : host+'erp-svc-goods/person/list',
@@ -323,10 +327,10 @@ $(document).ready(function() {
               toastr.error('获取人员失败！');
             }
           });
-          $("#userCode_update").val(result.data.userCode);
-          $("#userName_update").val(result.data.userName);
-
         }
+      },
+      error: function() {
+        toastr.error('获取人员失败！');
       }
 
     })
@@ -348,7 +352,7 @@ $(document).ready(function() {
       success: function(result) {
         if (result.status == 0) {
             toastr.success(result.msg);
-            refreshTable(data);
+            refreshTable(lastQuery);
           }else{
             toastr.error(result.msg);
           }
@@ -357,8 +361,6 @@ $(document).ready(function() {
         toastr.error("服务器出错，需联系管理员！");
       }
     });
-    $("#userCode_update").val(result.data.userCode);
-    $("#userName_update").val(result.data.userName);
   })
 
 
@@ -416,59 +418,4 @@ $(document).ready(function() {
     });
 
   };
-
-  $.fn.serializeObject = function() {
-    var o = {};
-    var a = this.serializeArray();
-    $.each(a, function() {
-      if (o[this.name]) {
-        if (!o[this.name].push) {
-          o[this.name] = [o[this.name]];
-        }
-        o[this.name].push(this.value || '');
-      } else {
-        o[this.name] = this.value || '';
-      }
-    });
-    return o;
-  };
-
-  // Warn if overriding existing method
-  if (Array.prototype.equals)
-    console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
-  // attach the .equals method to Array's prototype to call it on any array
-  Array.prototype.equals = function(array) {
-    // if the other array is a falsy value, return
-    if (!array)
-      return false;
-
-    // compare lengths - can save a lot of time 
-    if (this.length != array.length)
-      return false;
-
-    for (var i = 0, l = this.length; i < l; i++) {
-      // Check if we have nested arrays
-      if (this[i] instanceof Array && array[i] instanceof Array) {
-        // recurse into the nested arrays
-        if (!this[i].equals(array[i]))
-          return false;
-      } else if (this[i] != array[i]) {
-        // Warning - two different object instances will never be equal: {x:20} != {x:20}
-        return false;
-      }
-    }
-    return true;
-  }
-  // Hide method from for-in loops
-  Object.defineProperty(Array.prototype, "equals", {
-    enumerable: false
-  });
-
-  $(window).on('load', function () {  
-    $('.selectpicker').selectpicker({  
-      'selectedText': 'cat'  
-    }); 
-    // $('.selectpicker').selectpicker('hide');  
-  }); 
-
 })

@@ -6,7 +6,7 @@ $(document).ready(function() {
   new_element.setAttribute("src","js/util.js"); 
   document.body.appendChild(new_element);
   // To style all <select>
-  // $('select').selectpicker();
+  $('select').selectpicker();
 
   var host;
 
@@ -32,54 +32,6 @@ $(document).ready(function() {
   $('#dataTable tbody').on('click', 'tr', function() {
     host = getGoodsHost();
     token = getCookie("token");
-    // if (firstIdx == null) {
-    //   $('#updateBtn').removeAttr('disabled');
-    //   $('#deleteBtn').removeAttr('disabled');
-
-    //   var rowData = DataTable.row(this).data();
-    //   deleteId = rowData.id;
-
-    //   if (deleteId !== null) {
-    //     $(this).removeClass('highlight');
-    //     $(this).addClass('highlight');
-    //   }
-    // } else {
-    //   if (firstIdx.equals(DataTable.row(this))) {
-    //     if ($(this).hasClass('highlight')) {
-    //       $(this).removeClass('highlight')
-    //       deleteId = null;
-    //       $('#updateBtn').attr('disabled', 'false');
-    //       $('#deleteBtn').attr('disabled', 'false');
-    //     } else {
-    //       $('#updateBtn').removeAttr('disabled');
-    //       $('#deleteBtn').removeAttr('disabled');
-
-    //       var rowData = DataTable.row(this).data();
-    //       deleteId = rowData;
-
-    //       if (deleteId !== null) {
-    //         $(this).removeClass('highlight');
-    //         $(this).addClass('highlight');
-    //       }
-    //     }
-    //   } else {
-    //     $('#updateBtn').removeAttr('disabled');
-    //     $('#deleteBtn').removeAttr('disabled');
-
-    //     var rowData = DataTable.row(this).data();
-    //     deleteId = rowData.id;
-
-    //     if (deleteId !== null) {
-    //       $(this).removeClass('highlight');
-    //       $(this).addClass('highlight');
-    //     }
-
-    //     $('#dataTable tbody tr').eq(firstIdx).removeClass('highlight');
-    //   }
-    // }
-
-    // firstIdx = DataTable.row(this)[0];
-
     var rowData = DataTable.row(this).data();
     var fs =  $("#dataTable").dataTable().fnSettings();
     if(firstIdx == null) {
@@ -117,7 +69,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/person/list",
+      url: host + "erp-svc-goods/store/list",
       // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
       data: tableQuery,
       beforeSend: function(request) {
@@ -134,6 +86,7 @@ $(document).ready(function() {
           }
           result.data.forEach(function(ele,index){
             ele.sex = ele.sex ? '女':'男';
+            ele.status = ele.status ? '正常':'停用';            
             ele.createTime = formatTime(ele.createTime);
           })
           DataTable = $("#dataTable").DataTable({
@@ -141,17 +94,17 @@ $(document).ready(function() {
           columns: [{
             "data": "id"
           }, {
-            "data": "personCode"
+            "data": "storeCode"
           }, {
-            "data": "personName"
+            "data": "storeName"
           }, {
-            "data": "sex"
+            "data": "storeManagerId"
           }, {
-            "data": "idType"
+            "data": "phoneNumber"
           },{
-            "data": "idCardNo"
+            "data": "website"
           },{
-            "data": "phone"
+            "data": "status"
           }, {
             "data": "createTime"
           }],
@@ -180,35 +133,35 @@ $(document).ready(function() {
     token = getCookie("token");
     $("#addLabel").text("新增");
     $('#myModal').modal();
-    // $(".selectpicker").selectpicker({  
-    //   noneSelectedText : '请选择'  
-    //   });  
-    // $.ajax({
-    //   url : host+'erp-svc-goods/person/list',
-    //   type: 'post',
-    //   dataType: 'json',
-    //   contentType: 'application/json; charset=utf-8',
-    //   beforeSend: function(request) {
-    //       request.setRequestHeader("Authorization", 'Bearer ' + token);  
-    //   },
-    //   success: function(result) {
-    //     if (result.status == 0) {
-    //       var personSelect = $("#personId_add");
-    //       personSelect.empty();
-    //       var personList = result.data;
-    //       personList.forEach(function(ele, index){
-    //         personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
-    //       })
-    //       //初始化刷新数据  
-    //       // $('#personId_add').selectpicker('refresh');  
-    //     } else {
-    //       toastr.error('获取人员失败！');
-    //     }
-    //   },
-    //   error: function() {
-    //     toastr.error('获取人员失败！');
-    //   }
-    // })
+    $(".selectpicker").selectpicker({  
+      noneSelectedText : '请选择'  
+      });  
+    $.ajax({
+      url : host+'erp-svc-goods/person/list',
+      type: 'post',
+      dataType: 'json',
+      contentType: 'application/json; charset=utf-8',
+      beforeSend: function(request) {
+          request.setRequestHeader("Authorization", 'Bearer ' + token);  
+      },
+      success: function(result) {
+        if (result.status == 0) {
+          var personSelect = $("#storeManagerId_add");
+          personSelect.empty();
+          var personList = result.data;
+          personList.forEach(function(ele, index){
+            personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
+          })
+          //初始化刷新数据  
+          $('#storeManagerId_add').selectpicker('refresh');  
+        } else {
+          toastr.error('获取人员失败！');
+        }
+      },
+      error: function() {
+        toastr.error('获取人员失败！');
+      }
+    })
   });
 
   $("#add_submit").click(function(event) {
@@ -216,10 +169,8 @@ $(document).ready(function() {
     token = getCookie("token");
     var form = $('#addForm').serializeObject();
     var tableForm = JSON.stringify(form);
-    alert(tableForm);
-
     $.ajax({
-      url: host + 'erp-svc-goods/person/add',
+      url: host + 'erp-svc-goods/store/add',
       type: 'post',
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
@@ -257,7 +208,7 @@ $(document).ready(function() {
         if (willDelete) {
           $.ajax({
             type: "delete",
-            url: host + 'erp-svc-goods/person/delete/' + deleteId,
+            url: host + 'erp-svc-goods/store/delete/' + deleteId,
             beforeSend: function(request) {
               request.setRequestHeader("Authorization", "Bearer "+token);
             },
@@ -291,46 +242,46 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/person/" + deleteId,
+      url: host + "erp-svc-goods/store/" + deleteId,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function(result) {
         if (result.status == 0) {
-          // $.ajax({
-          //   url : host+'erp-svc-goods/person/list',
-          //   type: 'post',
-          //   dataType: 'json',
-          //   contentType: 'application/json; charset=utf-8',
-          //   beforeSend: function(request) {
-          //       request.setRequestHeader("Authorization", 'Bearer ' + token);  
-          //   },
-          //   success: function(result) {
-          //     if (result.status == 0) {
-          //       var personSelect = $("#personId_update");
-          //       personSelect.empty();
-          //       var personList = result.data;
-          //       personList.forEach(function(ele, index){
-          //         personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
-          //       })
-          //       $('#personId_update').selectpicker('refresh');  
-          //       //初始化刷新数据
-          //       // $('.selectpicker').selectpicker('val', ''l);
-          //     } else {
-          //       toastr.error('获取人员失败！');
-          //     }
-          //   },
-          //   error: function() {
-          //     toastr.error('获取人员失败！');
-          //   }
-          // });
-          person = result.data;
-          $("#personCode").val(person.personCode);
-          $("#personName").val(person.personName);
-          $("#idType").val(person.idType);
-          $("#idCardNo").val(person.idCardNo);
-          $("#sex").val(person.sex);
-          $("#phone").val(person.phone);
+          $.ajax({
+            url : host+'erp-svc-goods/person/list',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            beforeSend: function(request) {
+                request.setRequestHeader("Authorization", 'Bearer ' + token);  
+            },
+            success: function(result) {
+              if (result.status == 0) {
+                var personSelect = $("#storeManagerId_update");
+                personSelect.empty();
+                var personList = result.data;
+                personList.forEach(function(ele, index){
+                  personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
+                })
+                $('#storeManagerId_update').selectpicker('refresh');  
+                //初始化刷新数据
+                // $('.selectpicker').selectpicker('val', ''l);
+              } else {
+                toastr.error('获取人员失败！');
+              }
+            },
+            error: function() {
+              toastr.error('获取人员失败！');
+            }
+          });
+          resultData = result.data;
+          $("#storeCode").val(resultData.storeCode);
+          $("#storeName").val(resultData.storeName);
+          $("#storeManagerId_update").val(resultData.storeManagerId);
+          $("#phoneNumber").val(resultData.phoneNumber);
+          $("#website").val(resultData.website);
+          $("#status").val(resultData.status);
         }else {
           toastr.error('获取人员失败！');
         }
@@ -348,7 +299,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/person/update/" + deleteId,
+      url: host + "erp-svc-goods/store/update/" + deleteId,
       data: updateForm,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
@@ -378,7 +329,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/person/list",
+      url: host + "erp-svc-goods/store/list",
       data: data,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
@@ -391,6 +342,7 @@ $(document).ready(function() {
         }
         result.data.forEach(function(ele,index){
           ele.sex = ele.sex ? '女':'男';
+          ele.status = ele.status ? '正常':'停用';
           ele.createTime = formatTime(ele.createTime);
         })
 
@@ -400,17 +352,17 @@ $(document).ready(function() {
           columns: [{
             "data": "id"
           }, {
-            "data": "personCode"
+            "data": "storeCode"
           }, {
-            "data": "personName"
+            "data": "storeName"
           }, {
-            "data": "sex"
+            "data": "storeManagerId"
           }, {
-            "data": "idType"
+            "data": "phoneNumber"
           },{
-            "data": "idCardNo"
+            "data": "website"
           },{
-            "data": "phone"
+            "data": "status"
           }, {
             "data": "createTime"
           }],
