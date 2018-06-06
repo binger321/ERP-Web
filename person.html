@@ -38,19 +38,19 @@
           </a>
           <ul class="sidenav-second-level collapse" id="collapseComponents">
             <li>
-              <a href="">人员管理</a>
+              <a href="person.html">人员管理</a>
             </li>
             <li>
-              <a href="">用户管理</a>
+              <a href="user.html">用户管理</a>
             </li>
             <li>
-              <a href="">店铺管理</a>
+              <a href="store.html">店铺管理</a>
             </li>
             <li>
-              <a href="">供应商管理</a>
+              <a href="supplier.html">供应商管理</a>
             </li>
             <li>
-              <a href="">仓库管理</a>
+              <a href="warehouse.html">仓库管理</a>
             </li>
           </ul>
         </li>
@@ -64,19 +64,19 @@
               <a class="nav-link-collapse collapsed" data-toggle="collapse" href="#collapseGoods">基础信息</a>
               <ul class="sidenav-third-level collapse" id="collapseGoods">
                 <li>
-                  <a href="#">商品颜色</a>
+                  <a href="color.html">商品颜色</a>
                 </li>
                 <li>
-                  <a href="#">商品尺寸</a>
+                  <a href="color.html">商品尺寸</a>
                 </li>
                 <li>
-                  <a href="#">商品种类</a>
+                  <a href="coler.html">商品种类</a>
                 </li>
                 <li>
-                  <a href="#">商品品牌</a>
+                  <a href="brand.html">商品品牌</a>
                 </li>
                 <li>
-                  <a href="#">商品款式</a>
+                  <a href="style.html">商品款式</a>
                 </li>
               </ul>
             </li>
@@ -92,7 +92,7 @@
           </a>
           <ul class="sidenav-second-level collapse" id="collapseExamplePages">
             <li>
-              <a href="#">订单管理</a>
+              <a href="order.html">订单管理</a>
             </li>
 
           </ul>
@@ -105,16 +105,16 @@
           </a>
           <ul class="sidenav-second-level collapse" id="collapseOrder">
             <li>
-              <a href="#">生产计划</a>
+              <a href="productPlan.html">生产计划</a>
             </li>
             <li>
-              <<a href="#">生产订单管理</a>
+              <<a href="productOrder.html">生产订单管理</a>
             </li>
             <li>
-              <<a href="#">入库信息管理</a>
+              <<a href="stockIn.html">入库信息管理</a>
             </li>
             <li>
-              <<a href="#">出库信息管理</a>
+              <<a href="stockOut.html">出库信息管理</a>
             </li>
           </ul>
         </li>
@@ -227,20 +227,24 @@
           <div class="panel-heading"> 查询条件 </div>
         </div>
           <div class="card-body">
-            <form class="form-inline" id="userQuery">
+            <form class="form-inline" id="query">
               <div class="form-group">
-                <label for="userCode"> 用户编号 </label>
-                <input type="text" class="form-control" name="userCode" placeholder="如:system">
+                <label for="personCode"> 人员编号 </label>
+                <input type="text" class="form-control" name="personCode" placeholder="如:system">
               </div>
               <div class="form-group">
-                <label for="userName"> 用户名 </label>
-                <input type="text" class="form-control" name="userName" placeholder="如:system">
+                <label for="personName"> 姓名 </label>
+                <input type="text" class="form-control" name="personName" placeholder="如:system">
               </div>
               <div class="form-group">
-                <label for="personId"> 人员名 </label>
-                <input type="text" class="form-control" name="personId" placeholder="如:sysetm">
+                <label for="idCardNo"> 证件号 </label>
+                <input type="text" class="form-control" name="idCardNo" placeholder="如:123">
+              </div>              
+              <div class="form-group">
+                <label for="phone"> 手机号 </label>
+                <input type="text" class="form-control" name="phone" placeholder="如:123">
               </div>
-              <button type="submit" class="btn btn-info" id="userSelectBtn"> 搜索 </button>
+              <button type="submit" class="btn btn-info" id="selectBtn"> 搜索 </button>
             </form>    
           </div>
           </div>
@@ -257,10 +261,12 @@
               <thead>
                 <tr>
                   <th style="display: none">ID</th>
-                  <th>用户编号</th>
-                  <th>用户名</th>
-                  <th>人员名</th>
-                  <th>状态</th>
+                  <th>人员编号</th>
+                  <th>姓名</th>
+                  <th>性别</th>
+                  <th>证件类型</th>
+                  <th>证件号</th>
+                  <th>手机号</th>
                   <th>创建时间</th>
                 </tr>
               </thead>
@@ -371,7 +377,7 @@
     <script src="js/sb-admin-datatables.min.js"></script>
     <!-- <script src="js/sb-admin-charts.min.js"></script> -->
 
-    <script src="js/datatables.js"></script>
+    <script src="js/person.js"></script>
 
     <script src="vendor/sweetalert/sweetalert.min.js"></script> 
 

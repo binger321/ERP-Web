@@ -1,11 +1,16 @@
 // Call the dataTables jQuery plugin
 $(document).ready(function() {
+// 在这里引入了config.js
+  new_element=document.createElement("script"); 
+  new_element.setAttribute("type","text/javascript"); 
+  new_element.setAttribute("src","js/util.js"); 
+  document.body.appendChild(new_element);
 
 
+  var host;
 
-  var host = "http://localhost:20001/";
-
-  var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Mjc5NTYyMDEsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiZjM1ZjhkZWQtYWE1ZC00NzgyLTg3NTMtZDNmYTllYWMyODcyIiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.mRODYcySJitGU3wGksUkr5YHMTW2bHHSIi7Ft9DoBdLyXZ6oaH3nceRyb0fyVTQEuk0V1MqCpRjfjU7SGR07aLXUotpf78nnrgdQj6RfJFvHV9MmFaWSfFlimqE-3YwEUCCyc_ATCDWgrHftMlTQuZYNnS9-4YGJ4WWbe2oXjxAnJ1gYW3gMMlmwCW5zEmKSUPPczC_3VqfD_G5W_tsOTMvGJsCqJe0Z8Id5XLY_JTV41SJFLpJjPAwXgIalFSjtf-8uQswIy8e3Q-iZaTJrM2wnliqtHiz3mzMBQLeXtAm4ZgY6oOlUNRolw_ZrGNFVCStvgSksT7Wri06HXrYYPg";
+  var token = document.cookie.split(";")[0];
+  // var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Mjc5NTYyMDEsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiZjM1ZjhkZWQtYWE1ZC00NzgyLTg3NTMtZDNmYTllYWMyODcyIiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.mRODYcySJitGU3wGksUkr5YHMTW2bHHSIi7Ft9DoBdLyXZ6oaH3nceRyb0fyVTQEuk0V1MqCpRjfjU7SGR07aLXUotpf78nnrgdQj6RfJFvHV9MmFaWSfFlimqE-3YwEUCCyc_ATCDWgrHftMlTQuZYNnS9-4YGJ4WWbe2oXjxAnJ1gYW3gMMlmwCW5zEmKSUPPczC_3VqfD_G5W_tsOTMvGJsCqJe0Z8Id5XLY_JTV41SJFLpJjPAwXgIalFSjtf-8uQswIy8e3Q-iZaTJrM2wnliqtHiz3mzMBQLeXtAm4ZgY6oOlUNRolw_ZrGNFVCStvgSksT7Wri06HXrYYPg";
   // var lastIdx = null;
   var DataTable;
 
@@ -25,7 +30,7 @@ $(document).ready(function() {
   toastr.options.positionClass = 'toast-top-center';
 
   $('#dataTable tbody').on('click', 'tr', function() {
-
+    host = getGoodsHost();
     if (firstIdx == null) {
       $('#userDeleteBtn').removeAttr('disabled');
       $('#userUpdateBtn').removeAttr('disabled');
@@ -82,7 +87,7 @@ $(document).ready(function() {
   });
 
   $("#user_submit").click(function(event) {
-
+    host = getGoodsHost();
     var form = $('#userForm').serializeObject();
     var userSelectForm = JSON.stringify(form);
     alert(userSelectForm);
@@ -93,7 +98,7 @@ $(document).ready(function() {
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
       data: userSelectForm,
-      beforeSend: function(request) {  
+      beforeSend: function(request) {
           request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function() {
@@ -108,6 +113,7 @@ $(document).ready(function() {
 
   /*删除数据*/
   $('#userDeleteBtn').click(function(event) {
+    host = getGoodsHost();
     swal({
         title: "操作提示",
         text: "确定删除该条数据么？",
@@ -141,17 +147,16 @@ $(document).ready(function() {
 
   /*查找数据*/
   $("#userSelectBtn").click(function() {
-
+    host = getGoodsHost();
     var para = $('#userQuery').serializeObject();
     var userSelectQuery = JSON.stringify(para);
-
     lastQuery = userSelectQuery;
-
+    var fs =  $("#dataTable").dataTable().fnSettings();
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
       url: host + "erp-svc-goods/user/list",
-      // "?pageNo=" + pageNo + "&pageSize=" + pageSize
+      // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
       data: userSelectQuery,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", "Bearer " + token);
@@ -163,6 +168,10 @@ $(document).ready(function() {
           dataTable.fnClearTable(); //清空数据
           dataTable.fnDestroy(); //销毁datatable
         }
+        // if (result.data.page) {
+        //   result.data.recordsTotal = result.data.page.total;
+        //   result.data.recordsFiltered = result.data.page.
+        // }
         DataTable = $("#dataTable").DataTable({
 
           data: result.data,
@@ -184,10 +193,14 @@ $(document).ready(function() {
             "targets": 0
           }]
         });
-        toastr.success(result.msg);
+        if (result.start == 0) {
+          toastr.success(result.msg);
+        } else {
+          toastr.error(result.msg);
+        }
       },
       error: function() {
-        toastr.error(result.msg);
+        toastr.error("服务器出错！需联系管理员");
       }
     });
 
@@ -200,11 +213,11 @@ $(document).ready(function() {
   function userSelect(data) {
 
     var flag = false;
-
+    host = getGoodsHost();
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/user/list" + "?pageNo=" + pageNo + "&pageSize=" + pageSize,
+      url: host + "erp-svc-goods/user/update",
       data: data,
       success: function(result) {
 

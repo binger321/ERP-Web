@@ -1,0 +1,53 @@
+<html>
+ 
+ <head>dialog</head>
+   <!--   <link rel="stylesheet" type="text/css" href="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/css/bootstrap-select.css"> -->
+    
+  <!-- <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> -->
+
+<!-- Bootstrap core CSS-->
+  <link href="vendor/bootstrap/css/bootstrap2.css" rel="stylesheet">
+  <link href="vendor/bootstrap/css/bootstrap-select.min.css" rel="stylesheet" type="text/css">
+  <!-- <link  -->
+ <script>
+ function addOption(){
+  var item = document.getElementById("item").value;
+  var itemV = document.getElementById("itemV").value;
+  var list = document.getElementById("list");
+  var select = $("#id_select");
+  // list.options.length = list.options.length+1;
+  // var option = new Option(item,itemV,false,true);
+  var option1 = new Option(item,itemV,false,true);
+  // list.options[list.options.length-1]= option;
+  select.append("<option value='"+itemV+"'>"+item+"</option>");
+  select.append("<option value='"+itemV+"1'>"+item+1+"</option>");
+  //初始化刷新数据  
+          // $('.selectpicker').selectpicker('val', ''); 
+  $('.selectpicker').selectpicker('refresh'); 
+  // alert("ok");
+ }
+ </script>
+<body>
+    <select name="list" id="list" 
+      style="width:240px" size="5">
+    </select>
+   item:<input type="text" name="item" id="item"/>
+   value:<input type="text" name="itemV" id="itemV"/>
+  <input type="button" name="add" id="id" value="add" onClick="addOption();"/>
+
+<label for="id_select">Test label YEag</label>  
+    <select id="id_select" class="selectpicker bla bla bli" data-live-search="true">  
+<!--         <option>cow</option>  
+        <option>bull</option>  
+        <option class="get-class" disabled>ox</option>   -->
+    </select>  
+</body>
+
+<!--      <script type="text/javascript" src="http://www.daimajiayuan.com/download/jquery/jquery-1.10.2.min.js"></script>  
+    <script type="text/javascript" src="http://cdn.bootcss.com/bootstrap-select/2.0.0-beta1/js/bootstrap-select.js"></script>     
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+   -->  
+    <script src="jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap-select.min.js"></script>
+</html>
