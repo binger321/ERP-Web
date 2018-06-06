@@ -10,7 +10,7 @@ $(document).ready(function() {
 
   var host;
 
-  var token = document.cookie.split(";")[0];
+  var token;
   // var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Mjc5NTYyMDEsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiZjM1ZjhkZWQtYWE1ZC00NzgyLTg3NTMtZDNmYTllYWMyODcyIiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.mRODYcySJitGU3wGksUkr5YHMTW2bHHSIi7Ft9DoBdLyXZ6oaH3nceRyb0fyVTQEuk0V1MqCpRjfjU7SGR07aLXUotpf78nnrgdQj6RfJFvHV9MmFaWSfFlimqE-3YwEUCCyc_ATCDWgrHftMlTQuZYNnS9-4YGJ4WWbe2oXjxAnJ1gYW3gMMlmwCW5zEmKSUPPczC_3VqfD_G5W_tsOTMvGJsCqJe0Z8Id5XLY_JTV41SJFLpJjPAwXgIalFSjtf-8uQswIy8e3Q-iZaTJrM2wnliqtHiz3mzMBQLeXtAm4ZgY6oOlUNRolw_ZrGNFVCStvgSksT7Wri06HXrYYPg";
   // var lastIdx = null;
   var DataTable;
@@ -113,6 +113,7 @@ $(document).ready(function() {
     var tableQuery = JSON.stringify(para);
     lastQuery = tableQuery;
     var fs =  $("#dataTable").dataTable().fnSettings();
+    token = getCookie("token");
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
@@ -179,7 +180,8 @@ $(document).ready(function() {
     $('#myAddModal').modal();
     $(".selectpicker").selectpicker({  
       noneSelectedText : '请选择'  
-      });  
+      }); 
+    token = getCookie("token");
     $.ajax({
       url : host+'erp-svc-goods/person/list',
       type: 'post',
@@ -214,7 +216,7 @@ $(document).ready(function() {
     var form = $('#userForm').serializeObject();
     var tableForm = JSON.stringify(form);
     alert(tableForm);
-
+    token = getCookie("token");
     $.ajax({
       url: host + 'erp-svc-goods/user/add',
       type: 'post',
@@ -242,6 +244,7 @@ $(document).ready(function() {
   /*删除数据*/
   $('#userDeleteBtn').click(function(event) {
     host = getGoodsHost();
+    token = getCookie("token");
     swal({
         title: "操作提示",
         text: "确定删除该条数据么？",
@@ -278,6 +281,7 @@ $(document).ready(function() {
 
   $("#userUpdateBtn").click(function(event) {
     host = getGoodsHost();
+    token = getCookie("token");
     $("#updateLabel").text("新增");
     $('#myUpdateModal').modal();
     $(".selectpicker").selectpicker({  
@@ -331,6 +335,8 @@ $(document).ready(function() {
   $('#user_submit_update').click(function(event) {
     var updateObject = $("#userForm_update").serializeObject();
     var updateForm = JSON.stringify(updateObject);
+    token = getCookie("token");
+    host = getGoodsHost();
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
@@ -362,6 +368,7 @@ $(document).ready(function() {
 
     var flag = false;
     host = getGoodsHost();
+    token = getCookie("token");
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',

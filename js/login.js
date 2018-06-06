@@ -19,7 +19,7 @@ $(document).ready(function() {
           success: function(result) {
             if (result.status == 0) {
               toastr.success(result.msg);
-              document.cookie=result.data;
+              setCookie("token",result.data);
               window.location.href = 'default.html';
             } else {
               toastr.error(result.msg);
