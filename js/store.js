@@ -19,6 +19,8 @@ $(document).ready(function() {
 
   var deleteId = null;
 
+  var personId = null;
+
   var firstIdx = null;
 
   var lastQuery = null;
@@ -38,6 +40,7 @@ $(document).ready(function() {
       $(this).addClass('highlight');
       firstIdx = DataTable.row(this)[0];
       deleteId = DataTable.row(this).data().id;
+      personId = DataTable.row(this).data().storeManagerId;
       $('#updateBtn').removeAttr('disabled');
       $('#deleteBtn').removeAttr('disabled');
     } else {
@@ -45,12 +48,14 @@ $(document).ready(function() {
         $(this).removeClass('highlight');
         deleteId = null;
         firstIdx = null;
+        personId = null;
         $('#updateBtn').attr('disabled','true');
         $('#deleteBtn').attr('disabled','true');
       } else {
         $('#dataTable tbody tr').eq(firstIdx%fs._iDisplayLength).removeClass('highlight');
         firstIdx = DataTable.row(this)[0];
         deleteId = DataTable.row(this).data().id;
+        personId = DataTable.row(this).data().storeManagerId;
         $(this).addClass('highlight');
         $('#updateBtn').removeAttr('disabled'); 
         $('#deleteBtn').removeAttr('disabled');
@@ -262,7 +267,11 @@ $(document).ready(function() {
                 personSelect.empty();
                 var personList = result.data;
                 personList.forEach(function(ele, index){
-                  personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
+                  if (personList[index].id == personId) {
+                    personSelect.append("<option value='"+personList[index].id+"' selected = 'selected'>"+personList[index].personName+"</option>"); 
+                  } else {
+                    personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
+                  }
                 })
                 $('#storeManagerId_update').selectpicker('refresh');  
                 //初始化刷新数据

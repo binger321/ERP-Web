@@ -73,6 +73,7 @@ $.fn.serializeObject = function() {
   });
   return o;
 };
+
 // Warn if overriding existing method
 if (Array.prototype.equals)
   console.warn("Overriding existing Array.prototype.equals. Possible causes: New API defines the method, there's a framework conflict or you've got double inclusions in your code.");
@@ -97,7 +98,15 @@ Array.prototype.equals = function(array) {
   }
   return true;
 }
+
 // Hide method from for-in loops
 Object.defineProperty(Array.prototype, "equals", {
   enumerable: false
 });
+
+//扩展方法获取url参数  
+$.getUrlParam = function (name) {  
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");  
+    var r = window.location.search.substr(1).match(reg);  
+    if (r != null) return unescape(r[2]); return null;  
+};
