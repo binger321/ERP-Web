@@ -23,6 +23,9 @@ function add0(m){return m<10?'0'+m:m }
 //时间戳转化成时间格式
 
 function formatTime(timestamp){
+  if (!timestamp) {
+    return '';
+  }
   //timestamp是整数，否则要parseInt转换,不会出现少个0的情况
     var time = new Date(timestamp);
     var year = time.getFullYear();
