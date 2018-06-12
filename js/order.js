@@ -57,7 +57,46 @@ $(document).ready(function() {
     }
   })
 
-  /*查找数据*/
+  /*点击店铺*/
+  $("#showStore").click(function(){
+    host = getGoodsHost();
+    token = getCookie("token");
+    $("#storeId").selectpicker({  
+      noneSelectedText : '请选择'  
+    });
+    $.ajax({
+      url : host+'erp-svc-goods/store/list',
+      type: 'post',
+      dataType: 'json',
+      data: "{}",
+      contentType: 'application/json; charset=utf-8',
+      beforeSend: function(request) {
+          request.setRequestHeader("Authorization", 'Bearer ' + token);  
+      },
+      success: function(result) {
+        if (result.status == 0) {
+          var select = $("#storeId");
+          select.toggle();
+          select.empty();
+          var resultList = result.data;
+          select.append("<option value=''>"+""+"</option>"); 
+          resultList.forEach(function(ele, index){
+            select.append("<option value='"+resultList[index].id+"'>"+resultList[index].storeName+"</option>"); 
+          })
+          //初始化刷新数据  
+          $("#storeId").selectpicker('refresh');
+        } else {
+          toastr.error('获取供应商失败！');
+        }
+      },
+      error: function() {
+        toastr.error('获取供应商失败！');
+      }
+    })
+    return false;
+  });
+
+    /*查找数据*/
   $("#selectBtn").click(function() {
     host = getGoodsHost();
     token = getCookie("token");
@@ -68,7 +107,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/goodsSku/list",
+      url: host + "erp-svc-goods/saleOrder/order/list",
       // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
       data: tableQuery,
       beforeSend: function(request) {
@@ -84,31 +123,38 @@ $(document).ready(function() {
           dataTable.fnDestroy(); //销毁datatable
           }
           result.data.forEach(function(ele,index){
-            ele.status = ele.status ? '正常':'停用';            
-            ele.createTime = formatTime(ele.createTime);
+            ele.orderTime = formatTime(ele.orderTime);
+            ele.assignTime = formatTime(ele.assignTime);
+            ele.isReserveStock = ele.isReserveStock ? '已占用':'未占用';
           })
           DataTable = $("#dataTable").DataTable({
           data: result.data,
           columns: [{
             "data": "id"
           }, {
-            "data": "goodsCode"
+            "data": "orderSaleCode"
           }, {
-            "data": "skuCode"
+            "data": "orderCode"
           }, {
-            "data": "colorName"
+            "data": "storeName"
           }, {
-            "data": "colorCode"
+            "data": "orderStatus"
           }, {
-            "data": "sizeName"
+            "data": "customerName"
           }, {
-            "data": "sizeCode"
+            "data": "warehouseName"
+          }, {
+            "data": "trackNumber"
           }, {
             "data": "weight"
           }, {
-            "data": "status"
+            "data": "isReserveStock"
           }, {
-            "data": "comments"
+            "data": "orderLocMny"
+          }, {
+            "data": "orderTime"
+          }, {
+            "data": "assignTime"
           }],
           columnDefs: [{
             "visible": false,
@@ -139,7 +185,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/goodsSku/list",
+      url: host + "erp-svc-goods/saleOrder/order/list",
       data: data,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
@@ -151,7 +197,9 @@ $(document).ready(function() {
           dataTable.fnDestroy(); //销毁datatable
         }
         result.data.forEach(function(ele,index){
-          ele.status = ele.status ? '正常':'停用';
+          ele.orderTime = formatTime(ele.orderTime);
+          ele.assignTime = formatTime(ele.assignTime);
+          ele.isReserveStock = ele.isReserveStock ? '已占用':'未占用';        
         })
 
         DataTable = $("#dataTable").DataTable({
@@ -160,23 +208,29 @@ $(document).ready(function() {
           columns: [{
             "data": "id"
           }, {
-            "data": "goodsCode"
+            "data": "orderSaleCode"
           }, {
-            "data": "skuCode"
+            "data": "orderCode"
           }, {
-            "data": "colorName"
+            "data": "storeName"
           }, {
-            "data": "colorCode"
+            "data": "orderStatus"
           }, {
-            "data": "sizeName"
+            "data": "customerName"
           }, {
-            "data": "sizeCode"
+            "data": "warehouseName"
+          }, {
+            "data": "trackNumber"
           }, {
             "data": "weight"
           }, {
-            "data": "status"
+            "data": "isReserveStock"
           }, {
-            "data": "comments"
+            "data": "orderLocMny"
+          }, {
+            "data": "orderTime"
+          }, {
+            "data": "assignTime"
           }],
           columnDefs: [{
             "visible": false,
@@ -202,7 +256,7 @@ $(document).ready(function() {
       noneSelectedText : '请选择'  
       });  
     $.ajax({
-      url : host+'erp-svc-goods/goods/listGoods',
+      url : host+'erp-svc-goods/store/list',
       type: 'post',
       dataType: 'json',
       data: "{}",
@@ -212,74 +266,20 @@ $(document).ready(function() {
       },
       success: function(result) {
         if (result.status == 0) {
-          var select = $("#goodsId_add");
+          var select = $("#storeId_add");
           select.empty();
           var dataList = result.data;
           dataList.forEach(function(ele, index){
-            select.append("<option value='"+dataList[index].id+"'>"+dataList[index].goodsCode+"</option>"); 
+            select.append("<option value='"+dataList[index].id+"'>"+dataList[index].storeName+"</option>"); 
           })
           //初始化刷新数据  
-          $('#goodsId_add').selectpicker('refresh');  
+          $('#storeId_add').selectpicker('refresh');  
         } else {
-          toastr.error('获取商品失败！');
+          toastr.error('获取店铺失败！');
         }
       },
       error: function() {
-        toastr.error('获取商品失败！');
-      }
-    });
-    $.ajax({
-      url : host+'erp-svc-goods/goodsColor/list',
-      type: 'post',
-      dataType: 'json',
-      data: "{}",
-      contentType: 'application/json; charset=utf-8',
-      beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + token);  
-      },
-      success: function(result) {
-        if (result.status == 0) {
-          var select = $("#colorId_add");
-          select.empty();
-          var dataList = result.data;
-          dataList.forEach(function(ele, index){
-            select.append("<option value='"+dataList[index].id+"'>"+dataList[index].colorName+"</option>"); 
-          })
-          //初始化刷新数据  
-          $('#colorId_add').selectpicker('refresh');  
-        } else {
-          toastr.error('获取颜色失败！');
-        }
-      },
-      error: function() {
-        toastr.error('获取颜色失败！');
-      }
-    });    
-    $.ajax({
-      url : host+'erp-svc-goods/goodsSize/list',
-      type: 'post',
-      dataType: 'json',
-      data: "{}",
-      contentType: 'application/json; charset=utf-8',
-      beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + token);  
-      },
-      success: function(result) {
-        if (result.status == 0) {
-          var select = $("#sizeId_add");
-          select.empty();
-          var dataList = result.data;
-          dataList.forEach(function(ele, index){
-            select.append("<option value='"+dataList[index].id+"'>"+dataList[index].sizeName+"</option>"); 
-          })
-          //初始化刷新数据  
-          $('#sizeId_add').selectpicker('refresh');  
-        } else {
-          toastr.error('获取尺寸失败！');
-        }
-      },
-      error: function() {
-        toastr.error('获取尺寸失败！');
+        toastr.error('获取店铺失败！');
       }
     });
   });
@@ -290,7 +290,7 @@ $(document).ready(function() {
     var form = $('#addForm').serializeObject();
     var tableForm = JSON.stringify(form);
     $.ajax({
-      url: host + 'erp-svc-goods/goodsSku/add',
+      url: host + 'erp-svc-goods/saleOrder/add',
       type: 'post',
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
@@ -328,7 +328,7 @@ $(document).ready(function() {
         if (willDelete) {
           $.ajax({
             type: "post",
-            url: host + 'erp-svc-goods/goodsSku/delete/' + deleteId,
+            url: host + 'erp-svc-goods/saleOrder/delete/' + deleteId,
             beforeSend: function(request) {
               request.setRequestHeader("Authorization", "Bearer "+token);
             },
@@ -354,129 +354,26 @@ $(document).ready(function() {
   $("#updateBtn").click(function(event) {
     host = getGoodsHost();
     token = getCookie("token");
-    $("#updateLabel").text("修改");
-    $('#myUpdateModal').modal();
+    // $("#updateLabel").text("修改");
+    // $('#myUpdateModal').modal();
     // $(".selectpicker").selectpicker({  
     //   noneSelectedText : '请选择'  
     // }); 
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/goodsSku/" + deleteId,
+      url: host + "erp-svc-goods/saleOrder/findMain/" + deleteId,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function(result) {
-        if (result.status == 0) {
-          $("#skuName_update").val(result.data.skuName);
-          $("#skuCode_update").val(result.data.skuCode);
-          $("#weight_update").val(result.data.weight);
-          $("#costPrice_update").val(result.data.costPrice);
-          $("#comments_update").val(result.data.comments);
-          var goodsId= result.data.goodsId;
-          var colorId = result.data.colorId;
-          var sizeId = result.data.sizeId;
-          $.ajax({
-            url : host+'erp-svc-goods/goods/listGoods',
-            type: 'post',
-            dataType: 'json',
-            data: "{}",
-            contentType: 'application/json; charset=utf-8',
-            beforeSend: function(request) {
-                request.setRequestHeader("Authorization", 'Bearer ' + token);  
-            },
-            success: function(result) {
-              if (result.status == 0) {
-                var select = $("#goodsId_update");
-                select.empty();
-                var dataList = result.data;
-                dataList.forEach(function(ele, index){
-                  if (dataList[index].id == goodsId) {
-                    select.append("<option value='"+dataList[index].id+"' selected='selected'>"+dataList[index].goodsCode+"</option>"); 
-                  } else {
-                    select.append("<option value='"+dataList[index].id+"'>"+dataList[index].goodsCode+"</option>"); 
-                  }
-                })
-                //初始化刷新数据  
-                $('#goodsId_update').selectpicker('refresh');  
-              } else {
-                toastr.error('获取商品失败！');
-              }
-            },
-            error: function() {
-              toastr.error('获取商品失败！');
-            }
-          });
-          $.ajax({
-            url : host+'erp-svc-goods/goodsColor/list',
-            type: 'post',
-            dataType: 'json',
-            data: "{}",
-            contentType: 'application/json; charset=utf-8',
-            beforeSend: function(request) {
-                request.setRequestHeader("Authorization", 'Bearer ' + token);  
-            },
-            success: function(result) {
-              if (result.status == 0) {
-                var select = $("#colorId_update");
-                select.empty();
-                var dataList = result.data;
-                dataList.forEach(function(ele, index){
-                  if (dataList[index].id == colorId) {
-                    select.append("<option value='"+dataList[index].id+"' selected='selected'>"+dataList[index].colorName+"</option>"); 
-                  } else {
-                    select.append("<option value='"+dataList[index].id+"'>"+dataList[index].colorName+"</option>"); 
-                  }
-                })
-                //初始化刷新数据  
-                $('#colorId_update').selectpicker('refresh');  
-              } else {
-                toastr.error('获取颜色失败！');
-              }
-            },
-            error: function() {
-              toastr.error('获取颜色失败！');
-            }
-          });    
-          $.ajax({
-            url : host+'erp-svc-goods/goodsSize/list',
-            type: 'post',
-            dataType: 'json',
-            data: "{}",
-            contentType: 'application/json; charset=utf-8',
-            beforeSend: function(request) {
-                request.setRequestHeader("Authorization", 'Bearer ' + token);  
-            },
-            success: function(result) {
-              if (result.status == 0) {
-                var select = $("#sizeId_update");
-                select.empty();
-                var dataList = result.data;
-                dataList.forEach(function(ele, index){
-                  if (dataList[index].id == sizeId) {
-                    select.append("<option value='"+dataList[index].id+"'selected = 'selected'>"+dataList[index].sizeName+"</option>"); 
-                  } else {
-                    select.append("<option value='"+dataList[index].id+"'>"+dataList[index].sizeName+"</option>"); 
-                  }
-                })
-                //初始化刷新数据  
-                $('#sizeId_update').selectpicker('refresh');  
-              } else {
-                toastr.error('获取尺寸失败！');
-              }
-            },
-            error: function() {
-              toastr.error('获取尺寸失败！');
-            }
-          });
-        }else {
-          toastr.error('获取SKU失败！');
-        }
+        var resultData = result.data;
+        localStorage.setItem("data",JSON.stringify(resultData));
+        window.location.href = 'order_update.html'; 
       },
       error: function() {
-        toastr.error('获取SKU失败！');
+        toastr.error('获取订单失败！');
       }
-
     });
 
   })
@@ -486,7 +383,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-goods/goodsSku/update/" + deleteId,
+      url: host + "erp-svc-goods/saleOrder/update/" + deleteId,
       data: updateForm,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  

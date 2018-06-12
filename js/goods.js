@@ -11,8 +11,7 @@ $(document).ready(function() {
   var host;
 
   var token;
-  // var token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1Mjc5NTYyMDEsInVzZXJfbmFtZSI6InN5c3RlbSIsImF1dGhvcml0aWVzIjpbImVycFByaW5jaXBhbDpleUppWVhOcFkxVnpaWElpT25zaWRYTmxja2xrSWpveExDSjFjMlZ5UTI5a1pTSTZJbk41YzNSbGJTSXNJblZ6WlhKT1lXMWxJam9pYzNsemRHVnRJaXdpY0dWeWMyOXVUbUZ0WlNJNmJuVnNiQ3dpY0dWeWMyOXVTV1FpT2pGOWZRPT0iXSwianRpIjoiZjM1ZjhkZWQtYWE1ZC00NzgyLTg3NTMtZDNmYTllYWMyODcyIiwiY2xpZW50X2lkIjoiZXJwLWNsb3VkIiwic2NvcGUiOlsib3BlbmlkIl19.mRODYcySJitGU3wGksUkr5YHMTW2bHHSIi7Ft9DoBdLyXZ6oaH3nceRyb0fyVTQEuk0V1MqCpRjfjU7SGR07aLXUotpf78nnrgdQj6RfJFvHV9MmFaWSfFlimqE-3YwEUCCyc_ATCDWgrHftMlTQuZYNnS9-4YGJ4WWbe2oXjxAnJ1gYW3gMMlmwCW5zEmKSUPPczC_3VqfD_G5W_tsOTMvGJsCqJe0Z8Id5XLY_JTV41SJFLpJjPAwXgIalFSjtf-8uQswIy8e3Q-iZaTJrM2wnliqtHiz3mzMBQLeXtAm4ZgY6oOlUNRolw_ZrGNFVCStvgSksT7Wri06HXrYYPg";
-  // var lastIdx = null;
+
   var DataTable;
 
   var dataTable = $("#dataTable").dataTable();
@@ -596,33 +595,6 @@ $(document).ready(function() {
       },
       success: function(result) {
         if (result.status == 0) {
-          $.ajax({
-            url : host+'erp-svc-goods/person/list',
-            type: 'post',
-            dataType: 'json',
-            contentType: 'application/json; charset=utf-8',
-            beforeSend: function(request) {
-                request.setRequestHeader("Authorization", 'Bearer ' + token);  
-            },
-            success: function(result) {
-              if (result.status == 0) {
-                var personSelect = $("#storeManagerId_update");
-                personSelect.empty();
-                var personList = result.data;
-                personList.forEach(function(ele, index){
-                  personSelect.append("<option value='"+personList[index].id+"'>"+personList[index].personName+"</option>"); 
-                })
-                $('#storeManagerId_update').selectpicker('refresh');  
-                //初始化刷新数据
-                // $('.selectpicker').selectpicker('val', ''l);
-              } else {
-                toastr.error('获取人员失败！');
-              }
-            },
-            error: function() {
-              toastr.error('获取人员失败！');
-            }
-          });
           var resultData = result.data;
           localStorage.setItem("data",JSON.stringify(resultData));
           window.location.href = 'goods_update.html';
