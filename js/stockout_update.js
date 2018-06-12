@@ -30,22 +30,20 @@ $(document).ready(function() {
   var pageSize = setting._iDisplayLength;
   var dataObject;
 
-  var storeId =  null;
-
   toastr.options.positionClass = 'toast-top-center';
   $(function(){
     // localStorage.removeItem("data");
     dataObject = JSON.parse(localStorage.getItem("data"));
-    $("#stockInBillMainCode_update").val(dataObject.stockInBillMainCode);
-    $("#productOrderCode_update").val(dataObject.productOrderCode);
-    $("#billTypeStr_update").val(dataObject.billTypeStr);
-    $("#stockinStatusStr_update").val(dataObject.stockinStatusStr);
-    $("#applyQuantity_update").val(dataObject.applyQuantity);
-    $("#quantity_update").val(dataObject.quantity);
-    $("#defectiveQuantity_update").val(dataObject.defectiveQuantity);
-    $("#receiverName_update").val(dataObject.receiverName);
-    $("#remark_update").val(dataObject.remark);
-    storeId= dataObject.storeId;
+    $("#stockOutBillMainCode").val(dataObject.stockOutBillMainCode);
+    $("#orderSaleCode").val(dataObject.orderSaleCode);
+    $("#billType").val(dataObject.billType == 100 ? '发货出库':'其他出库');
+    $("#stockoutStatus").val(dataObject.stockoutStatus == 100?'保存':'审核');
+    $("#quantity").val(dataObject.quantity);
+    $("#totalAmount").val(dataObject.totalAmount);
+    $("#countryName").val(dataObject.countryName);
+    $("#address1").val(dataObject.address1);
+    $("#delayDays").val(dataObject.delayDays);
+    $("#remark").val(dataObject.remark);
   });
 
 
@@ -113,54 +111,11 @@ $(document).ready(function() {
           $("#warehouseId_update").removeAttr("disabled");
           $("#warehouseId_update").selectpicker('refresh');
         } else {
-          toastr.error('获取仓库失败！');
+          toastr.error('获取店铺失败！');
         }
       },
       error: function() {
-        toastr.error('获取仓库失败！');
-      }
-    });
-    return false;
-  })
-      /*点击供应商*/
-  $("#showSupplier").click(function(){
-    host = getGoodsHost();
-    stockHost = getGoodsHost();
-    token = getCookie("token");
-    $("#brandId_update").selectpicker({  
-      noneSelectedText : '请选择'  
-    });
-    $.ajax({
-      url : host+'erp-svc-goods/supplier/list',
-      type: 'post',
-      dataType: 'json',
-      data: "{}",
-      contentType: 'application/json; charset=utf-8',
-      beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + token);  
-      },
-      success: function(result) {
-        if (result.status == 0) {
-          var select = $("#supplierId_update");
-          select.toggle();
-          select.empty();
-          var resultList = result.data;
-          resultList.forEach(function(ele, index){
-            if(resultList[index].id == dataObject.supplierId) {
-              select.append("<option value='"+JSON.stringify(resultList[index])+"' selected='selected'>"+resultList[index].supplierName+"</option>"); 
-            } else {
-              select.append("<option value='"+JSON.stringify(resultList[index])+"'>"+resultList[index].supplierName+"</option>"); 
-            }
-          });
-          //初始化刷新数据  
-          $("#supplierId_update").removeAttr("disabled");
-          $("#supplierId_update").selectpicker('refresh');
-        } else {
-          toastr.error('获取供应商失败！');
-        }
-      },
-      error: function() {
-        toastr.error('获取供应商失败！');
+        toastr.error('获取店铺失败！');
       }
     });
     return false;
@@ -173,17 +128,11 @@ $(document).ready(function() {
     stockHost = getStockHost();
     token = getCookie("token");
     var para = $('#saveForm').serializeObject();
-    if (para.supplierId) {
-      var supplier = JSON.parse(para.supplierId);
-      para.supplierId = supplier.id;
-      para.supplierCode = supplier.supplierCode;
-      para.supplierName = supplier.supplierName; 
-    }
     var saveForm = JSON.stringify(para);
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: stockHost + "erp-svc-stock/stockIn/update/"+dataObject.id,
+      url: stockHost + "erp-svc-stock/stockOut/update/"+dataObject.id,
       // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
       data: saveForm,
       beforeSend: function(request) {
@@ -193,7 +142,7 @@ $(document).ready(function() {
       success: function(result) {
 
         if (result.status == 0) {
-          window.location.href = 'stockIn.html';
+          window.location.href = 'stockOut.html';
           toastr.success(result.msg);
         } else {
           toastr.error(result.msg);
@@ -218,7 +167,7 @@ $(document).ready(function() {
   $.ajax({
     type: 'post',
     contentType: 'application/json; charset=utf-8',
-    url: stockHost + "erp-svc-stock/stockIn/findAllDetail/"+dataObject.id,
+    url: stockHost + "erp-svc-stock/stockOut/findAllDetail?mainCode="+dataObject.stockOutBillMainCode,
     // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
     data: lastQuery,
     beforeSend: function(request) {
@@ -237,6 +186,8 @@ $(document).ready(function() {
         columns: [{
           "data": "id"
         }, {
+          "data": "stockOutBillDetailCode"
+        }, {
           "data": "goodsCode"
         }, {
           "data": "skuCode"
@@ -249,17 +200,15 @@ $(document).ready(function() {
         }, {
           "data": "sizeCode"
         }, {
-          "data": "quantity"
+          "data": "applyQuantity"
         }, {
-          "data": "inQuantity"
-        }, {
-          "data": "inferiorQuantity"
-        }, {
-          "data": "weight"
+          "data": "outQuantity"
         }, {
           "data": "price"
         }, {
-          "data": "totalPrice"
+          "data": "totalMny"
+        }, {
+          "data": "weight"
         }],
         columnDefs: [{
           "visible": false,
@@ -290,7 +239,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: stockHost + "erp-svc-stock/stockIn/findAllDetail/"+dataObject.id,
+      url: stockHost + "erp-svc-stock/stockOut/findAllDetail?mainCode="+dataObject.stockOutBillMainCode,
       data: data,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
@@ -306,6 +255,8 @@ $(document).ready(function() {
           columns: [{
           "data": "id"
         }, {
+          "data": "stockOutBillDetailCode"
+        }, {
           "data": "goodsCode"
         }, {
           "data": "skuCode"
@@ -318,17 +269,15 @@ $(document).ready(function() {
         }, {
           "data": "sizeCode"
         }, {
-          "data": "quantity"
+          "data": "applyQuantity"
         }, {
-          "data": "inQuantity"
-        }, {
-          "data": "inferiorQuantity"
-        }, {
-          "data": "weight"
+          "data": "outQuantity"
         }, {
           "data": "price"
         }, {
-          "data": "totalPrice"
+          "data": "totalMny"
+        }, {
+          "data": "weight"
         }],
           columnDefs: [{
             "visible": false,
@@ -402,9 +351,10 @@ $(document).ready(function() {
     form.sizeId = sku.sizeId;
     form.sizeCode = sku.sizeCode;
     form.sizeName = sku.sizeName;
+    form.stockOutBillMainCode = dataObject.stockOutBillMainCode;
     var tableForm = JSON.stringify(form);
     $.ajax({
-      url : stockHost+'erp-svc-stock/stockIn/addDetail?mainCode='+dataObject.stockInBillMainCode,
+      url : stockHost+'erp-svc-stock/stockOut/addDetail',
       type: 'post',
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
@@ -442,7 +392,7 @@ $(document).ready(function() {
         if (willDelete) {
           $.ajax({
             type: "post",
-            url: stockHost + 'erp-svc-stock/stockIn/deleteDetail/' + deleteId,
+            url: stockHost + 'erp-svc-stock/stockOut/deleteDetail/' + deleteId,
             beforeSend: function(request) {
               request.setRequestHeader("Authorization", "Bearer "+token);
             },
@@ -480,14 +430,14 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: stockHost + "erp-svc-stock/stockIn/findDetail/" + deleteId,
+      url: stockHost + "erp-svc-stock/stockOut/findDetailById/" + deleteId,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function(result) {
         if (result.status == 0) {
-          $("#quantity").val(result.data.quantity);
-          $("#inQuantity").val(result.data.inQuantity);
+          $("#applyQuantity").val(result.data.applyQuantity);
+          $("#outQuantity").val(result.data.outQuantity);
           $("#inferiorQuantity").val(result.data.inferiorQuantity);
           $("#weight").val(result.data.weight);
           $("#price").val(result.data.price);
@@ -511,7 +461,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: stockHost + "erp-svc-stock/stockIn/updateDetail/" + deleteId+"?mainCode="+dataObject.stockInBillMainCode,
+      url: stockHost + "erp-svc-stock/stockOut/updateDetail/" + deleteId,
       data: updateForm,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  

@@ -99,45 +99,6 @@ $(document).ready(function() {
     return false;
   });
 
-    /*点击供应商*/
-  $("#showSupplier").click(function(){
-    host = getGoodsHost();
-    token = getCookie("token");
-    $("#storeId").selectpicker({  
-      noneSelectedText : '请选择'  
-    });
-    $.ajax({
-      url : host+'erp-svc-goods/supplier/list',
-      type: 'post',
-      dataType: 'json',
-      data: "{}",
-      contentType: 'application/json; charset=utf-8',
-      beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + token);  
-      },
-      success: function(result) {
-        if (result.status == 0) {
-          var select = $("#supplierId");
-          select.toggle();
-          select.empty();
-          var resultList = result.data;
-          select.append("<option value=''>"+""+"</option>"); 
-          resultList.forEach(function(ele, index){
-            select.append("<option value='"+resultList[index].id+"'>"+resultList[index].supplierName+"</option>"); 
-          })
-          //初始化刷新数据  
-          $("#supplierId").removeAttr('disabled');
-          $("#supplierId").selectpicker('refresh');          
-        } else {
-          toastr.error('获取供应商失败！');
-        }
-      },
-      error: function() {
-        toastr.error('获取供应商失败！');
-      }
-    })
-    return false;
-  });
 
     /*查找数据*/
   $("#selectBtn").click(function() {
@@ -150,7 +111,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-stock/stockIn/list",
+      url: host + "erp-svc-stock/stockOut/list",
       // +"?pageNo=" +fs._iDisplayStart + "&pageSize=" + fs._iDisplayLength,
       data: tableQuery,
       beforeSend: function(request) {
@@ -167,38 +128,40 @@ $(document).ready(function() {
           }
           result.data.forEach(function(ele,index){
             ele.auditDate = formatTime(ele.auditDate);
-            ele.assignTime = formatTime(ele.assignTime);
+            ele.createTime = formatTime(ele.createTime);
+            ele.stockoutStatus = ele.stockoutStatus == 100?'保存':'审核';
+            ele.billType = ele.billType == 100?'发货出库':'其它出库';
           })
           DataTable = $("#dataTable").DataTable({
           data: result.data,
           columns: [{
             "data": "id"
           }, {
-            "data": "stockInBillMainCode"
+            "data": "stockOutBillMainCode"
           }, {
-            "data": "productOrderCode"
-          }, {
-            "data": "billTypeStr"
-          }, {
-            "data": "stockinStatusStr"
-          }, {
-            "data": "stockinDate"
-          },{
-            "data": "supplierName"
+            "data": "orderSaleCode"
           }, {
             "data": "warehouseName"
           }, {
-            "data": "trackNumber"
+            "data": "billType"
+          }, {
+            "data": "stockoutStatus"
+          }, {
+            "data": "warehouseName"
+          },{
+            "data": "createTime"
           }, {
             "data": "auditDate"
           }, {
-            "data": "applyQuantity"
+            "data": "delayDays"
+          }, {
+            "data": "logistCompanyName"
+          }, {
+            "data": "trackNumber"
+          }, {
+            "data": "totalAmount"
           }, {
             "data": "quantity"
-          }, {
-            "data": "defectiveQuantity"
-          }, {
-            "data": "stockInMoney"
           }],
           columnDefs: [{
             "visible": false,
@@ -229,7 +192,7 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: host + "erp-svc-stock/stockIn/list",
+      url: host + "erp-svc-stock/stockOut/list",
       data: data,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
@@ -242,7 +205,9 @@ $(document).ready(function() {
         }
         result.data.forEach(function(ele,index){
             ele.auditDate = formatTime(ele.auditDate);
-            ele.stockinDate = formatTime(ele.stockinDate);     
+            ele.createTime = formatTime(ele.createTime);     
+            ele.stockoutStatus = ele.stockoutStatus == 100?'保存':'审核';
+            ele.billType = ele.billType == 100?'发货出库':'其它出库';
         })
 
         DataTable = $("#dataTable").DataTable({
@@ -251,31 +216,31 @@ $(document).ready(function() {
           columns: [{
             "data": "id"
           }, {
-            "data": "stockInBillMainCode"
+            "data": "stockOutBillMainCode"
           }, {
-            "data": "productOrderCode"
-          }, {
-            "data": "billTypeStr"
-          }, {
-            "data": "stockinStatusStr"
-          }, {
-            "data": "stockinDate"
-          },{
-            "data": "supplierName"
+            "data": "orderSaleCode"
           }, {
             "data": "warehouseName"
           }, {
-            "data": "trackNumber"
+            "data": "billType"
+          }, {
+            "data": "stockoutStatus"
+          }, {
+            "data": "warehouseName"
+          },{
+            "data": "createTime"
           }, {
             "data": "auditDate"
           }, {
-            "data": "applyQuantity"
+            "data": "delayDays"
+          }, {
+            "data": "logistCompanyName"
+          }, {
+            "data": "trackNumber"
+          }, {
+            "data": "totalAmount"
           }, {
             "data": "quantity"
-          }, {
-            "data": "defectiveQuantity"
-          }, {
-            "data": "stockInMoney"
           }],
           columnDefs: [{
             "visible": false,
@@ -301,35 +266,6 @@ $(document).ready(function() {
     $(".selectpicker").selectpicker({  
       noneSelectedText : '请选择'  
       });
-
-    $.ajax({
-      url : host+'erp-svc-goods/supplier/list',
-      type: 'post',
-      dataType: 'json',
-      data: "{}",
-      contentType: 'application/json; charset=utf-8',
-      beforeSend: function(request) {
-          request.setRequestHeader("Authorization", 'Bearer ' + token);  
-      },
-      success: function(result) {
-        if (result.status == 0) {
-          var select = $("#supplierId_add");
-          select.empty();
-          var dataList = result.data;
-          dataList.forEach(function(ele, index){
-            select.append("<option value='"+JSON.stringify(dataList[index])+"'>"+dataList[index].supplierName+"</option>"); 
-          })
-          //初始化刷新数据  
-          $('#supplierId_add').selectpicker('refresh');  
-        } else {
-          toastr.error('获取供应商失败！');
-        }
-      },
-      error: function() {
-        toastr.error('获取供应商失败！');
-      }
-    }); 
-
     $.ajax({
       url : stockHost+'erp-svc-stock/warehouse/list',
       type: 'post',
@@ -364,13 +300,9 @@ $(document).ready(function() {
     stockHost = getStockHost();
     token = getCookie("token");
     var form = $('#addForm').serializeObject();
-    var supplier = JSON.parse(form.supplierId);
-    form.supplierId = supplier.id;
-    form.supplierCode = supplier.supplierCode;
-    form.supplierName = supplier.supplierName;
     var tableForm = JSON.stringify(form);
     $.ajax({
-      url: stockHost + 'erp-svc-stock/stockIn/add',
+      url: stockHost + 'erp-svc-stock/stockOut/add',
       type: 'post',
       dataType: 'json',
       contentType: 'application/json; charset=utf-8',
@@ -409,7 +341,7 @@ $(document).ready(function() {
         if (willDelete) {
           $.ajax({
             type: "post",
-            url: stockHost + 'erp-svc-stock/stockIn/delete/' + deleteId,
+            url: stockHost + 'erp-svc-stock/stockOut/delete/' + deleteId,
             beforeSend: function(request) {
               request.setRequestHeader("Authorization", "Bearer "+token);
             },
@@ -444,14 +376,14 @@ $(document).ready(function() {
     $.ajax({
       type: 'post',
       contentType: 'application/json; charset=utf-8',
-      url: stockHost + "erp-svc-stock/stockIn/find/" + deleteId,
+      url: stockHost + "erp-svc-stock/stockOut/findById/" + deleteId,
       beforeSend: function(request) {
         request.setRequestHeader("Authorization", 'Bearer ' + token);  
       },
       success: function(result) {
         var resultData = result.data;
         localStorage.setItem("data",JSON.stringify(resultData));
-        window.location.href = 'stockin_update.html'; 
+        window.location.href = 'stockOut_update.html'; 
       },
       error: function() {
         toastr.error('获取订单失败！');
