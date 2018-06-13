@@ -120,6 +120,9 @@
             </li>
             <li>
               <<a href="stockOut.html">出库信息管理</a>
+            </li>            
+            <li>
+              <<a href="currentStock.html">库存信息</a>
             </li>
           </ul>
         </li>
@@ -232,7 +235,7 @@
           <div class="panel-heading"> 查询条件 </div>
         </div>
           <div class="card-body">
-            <form class="form-inline" id="saveForm">
+            <form class="form-inline" id="query">
               <div class="form-group">
                 <label for="goodsCode"> 商品货号 </label>
                 <input type="text" class="form-control" name="goodsCode" placeholder="如:system">
@@ -323,7 +326,7 @@
           <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login.html" onclick="logout()">Logout</a>
           </div>
         </div>
       </div>

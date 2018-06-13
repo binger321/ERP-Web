@@ -120,6 +120,9 @@
             </li>
             <li>
               <<a href="stockOut.html">出库信息管理</a>
+            </li>            
+            <li>
+              <<a href="currentStock.html">库存信息</a>
             </li>
           </ul>
         </li>
@@ -256,7 +259,7 @@
               </div>              
               <div class="form-group">
                 <label for="supplierId" id="showSupplier" > <a href="">点击筛选供应商</a> </label>
-                <select name="supplierId" id="supplierId" class="selectpicker" data-live-search="true" disabled="true"></select>
+                <select name="supplierId" id="supplierId_update" class="selectpicker" data-live-search="true" disabled="true"></select>
               </div>
               <div class="form-group">
                 <label for="state"> 物流跟踪号 </label>
@@ -296,7 +299,7 @@
               <thead>
                 <tr>
                   <th style="display: none">ID</th>
-                  <th>出库单编号</th>
+                  <th>入库单编号</th>
                   <th>生产订单编号</th>
                   <th>入库类型</th>
                   <th>入库状态</th>
@@ -347,7 +350,7 @@
           <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
           <div class="modal-footer">
             <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-            <a class="btn btn-primary" href="login.html">Logout</a>
+            <a class="btn btn-primary" href="login.html" onclick="logout()">Logout</a>
           </div>
         </div>
       </div>

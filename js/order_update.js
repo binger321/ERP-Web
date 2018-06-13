@@ -158,6 +158,15 @@ $(document).ready(function() {
 
     return false;
 
+  }); 
+
+
+  /*保存数据*/
+  $("#exportBtn").click(function() {
+    host = getGoodsHost();
+    token = getCookie("token");
+    window.open(host+'erp-svc-goods/saleOrder/download/excel/saleOrderDetail/'+dataObject.id);
+    return false;
   });
 
 
@@ -315,7 +324,7 @@ $(document).ready(function() {
           select.empty();
           var resultList = result.data;
           resultList.forEach(function(ele, index){
-            select.append("<option value='"+resultList[index].id+"-"+resultList[index].goodsId+"'>"+resultList[index].goodsCode+"+"+resultList[index].colorName+"+"+resultList[index].sizeCode+"</option>"); 
+            select.append("<option value='"+resultList[index].id+"-"+resultList[index].goodsId+"'>"+resultList[index].goodsCode+"+"+resultList[index].colorName+"+"+resultList[index].sizeName+"</option>"); 
           })
           //初始化刷新数据  
           $("#skuId_add").selectpicker('refresh');
